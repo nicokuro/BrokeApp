@@ -91,6 +91,15 @@ jobs:
     - name: Pull image
       run: docker pull ${{ needs.build.outputs.image }}
 
+    - name: Scan de seguridad (Trivy)
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ needs.build.outputs.image }}
+        format: table
+        exit-code: '1'
+        ignore-unfixed: true
+        severity: 'CRITICAL,HIGH'    
+
     - name: Start container
       run: docker run -d -p 5000:5000 --name app ${{ needs.build.outputs.image }}
 
